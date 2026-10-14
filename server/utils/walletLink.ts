@@ -163,6 +163,10 @@ export async function createWalletTransaction(
     `
   )
 
+  if (!transaction) {
+    throw new Error('Failed to create wallet transaction')
+  }
+
   await execute(
     db,
     sql`

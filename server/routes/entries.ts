@@ -148,6 +148,10 @@ export const create = forge
         .values(values)
         .returning()
 
+      if (!baseEntry) {
+        return response.badRequest('Failed to create entry')
+      }
+
       const settings = await db.query.settings.findFirst()
 
       if (
@@ -185,6 +189,10 @@ export const create = forge
         .set({ wallet_entry_id: walletId, amount_paid: 0 })
         .where(eq(rentalPaymentEntries.id, baseEntry.id))
         .returning()
+
+      if (!linkedEntry) {
+        return response.notFound()
+      }
 
       return response.created(linkedEntry)
     }
@@ -270,6 +278,10 @@ export const update = forge
         .where(eq(rentalPaymentEntries.id, id))
         .returning()
 
+      if (!updatedEntry) {
+        return response.notFound()
+      }
+
       if (currentEntry.wallet_entry_id && (body.year || body.month)) {
         const newYear = body.year ?? currentEntry.year
 
@@ -349,6 +361,10 @@ export const linkWalletTransaction = forge
         .where(eq(rentalPaymentEntries.id, entryId))
         .returning()
 
+      if (!updated) {
+        return response.notFound()
+      }
+
       return response.ok(updated)
     }
   )
@@ -390,6 +406,10 @@ export const unlinkWalletTransaction = forge
       })
       .where(eq(rentalPaymentEntries.id, entryId))
       .returning()
+
+    if (!updated) {
+      return response.notFound()
+    }
 
     return response.ok(updated)
   })

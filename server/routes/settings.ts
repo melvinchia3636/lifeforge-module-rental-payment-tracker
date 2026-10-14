@@ -40,6 +40,10 @@ export const get = forge
             .where(eq(rentalPaymentSettings.id, existing.id))
             .returning()
 
+          if (!updated) {
+            return response.notFound()
+          }
+
           return response.ok(updated)
         }
 
@@ -56,6 +60,10 @@ export const get = forge
           rental_fee: 0
         })
         .returning()
+
+      if (!created) {
+        return response.badRequest('Failed to create settings')
+      }
 
       return response.ok(created)
     }
@@ -80,6 +88,10 @@ export const update = forge
         .values(body)
         .returning()
 
+      if (!created) {
+        return response.badRequest('Failed to create settings')
+      }
+
       return response.ok(created)
     }
 
@@ -88,6 +100,10 @@ export const update = forge
       .set(body)
       .where(eq(rentalPaymentSettings.id, existing.id))
       .returning()
+
+    if (!updated) {
+      return response.notFound()
+    }
 
     return response.ok(updated)
   })
