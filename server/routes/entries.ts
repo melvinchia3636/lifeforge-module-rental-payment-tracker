@@ -296,7 +296,7 @@ export const update = forge
               `Rental Payment - ${monthLabel(newYear, newMonth)}`
             )
           } catch {
-            // Wallet module unavailable or transaction missing — ignore.
+            // Wallet module unavailable or transaction missing - ignore.
           }
         }
       }
