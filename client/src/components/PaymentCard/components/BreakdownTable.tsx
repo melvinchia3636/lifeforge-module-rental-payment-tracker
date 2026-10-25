@@ -3,11 +3,18 @@ import dayjs from 'dayjs'
 import { Trans } from 'react-i18next'
 
 import { useModuleTranslation } from '@lifeforge/localization'
-import { Text, usePersonalization } from '@lifeforge/ui'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableHeaderCell,
+  TableRow,
+  Text,
+  usePersonalization
+} from '@lifeforge/ui'
 
 import type { CalculatedPayment } from '@/utils/calculations'
-
-import * as styles from './BreakdownTable.css'
 
 function BreakdownTable({
   entry,
@@ -26,80 +33,84 @@ function BreakdownTable({
   const { language } = usePersonalization()
 
   return (
-    <table className={styles.table}>
-      <thead>
-        <tr>
-          <th className={styles.header} style={{ width: '100%' }} />
-          <th className={styles.header}>RM</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr className={styles.row}>
-          <td className={styles.label}>{t('paymentCard.baseRentalFee')}</td>
-          <td className={styles.value}>{entry.rental_fee.toFixed(2)}</td>
-        </tr>
-        <tr className={styles.row}>
-          <td className={styles.label}>
+    <Table mt="md">
+      <TableHeader>
+        <TableRow>
+          <TableHeaderCell align="left" width="100%" />
+          <TableHeaderCell>RM</TableHeaderCell>
+        </TableRow>
+      </TableHeader>
+      <TableBody color={{ base: 'bg-500', dark: 'bg-400' }}>
+        <TableRow>
+          <TableCell>{t('paymentCard.baseRentalFee')}</TableCell>
+          <TableCell nowrap align="right">
+            <Text weight="medium">{entry.rental_fee.toFixed(2)}</Text>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>
             {t('paymentCard.electricityBillPayable', {
               used: entry.electricity_used,
               rate: entry.electricity_rate.toFixed(2)
             })}
-          </td>
-          <td className={styles.value}>{electricityBill.toFixed(2)}</td>
-        </tr>
-        <tr className={styles.row}>
-          <td className={styles.label}>{t('paymentCard.fixedUtilityBill')}</td>
-          <td className={styles.value}>{entry.utility_bill.toFixed(2)}</td>
-        </tr>
+          </TableCell>
+          <TableCell nowrap align="right">
+            <Text weight="medium">{electricityBill.toFixed(2)}</Text>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>{t('paymentCard.fixedUtilityBill')}</TableCell>
+          <TableCell nowrap align="right">
+            <Text weight="medium">{entry.utility_bill.toFixed(2)}</Text>
+          </TableCell>
+        </TableRow>
 
-        <tr className={styles.row}>
-          <td className={styles.label}>
-            <span style={{ fontWeight: 600 }}>
-              {t('paymentCard.totalPayable')}:
-            </span>
-          </td>
-          <td className={styles.totalValue}>
-            <Text
-              as="div"
-              className={styles.totalDivider}
-              color={{ print: 'black' }}
-            >
+        <TableRow>
+          <TableCell>
+            <Text weight="semibold">{t('paymentCard.totalPayable')}:</Text>
+          </TableCell>
+          <TableCell nowrap align="right" variant="total">
+            <Text color={{ print: 'black' }} weight="semibold">
               {totalPayable.toFixed(2)}
             </Text>
-          </td>
-        </tr>
+          </TableCell>
+        </TableRow>
 
-        <tr className={styles.row}>
-          <td className={styles.label}>{t('paymentCard.paymentMade')}</td>
-          <td className={`${styles.green} ${styles.value}`}>
-            {amountPaid.toFixed(2)}
-          </td>
-        </tr>
-        <tr className={styles.row}>
-          <td className={styles.label}>
+        <TableRow>
+          <TableCell>{t('paymentCard.paymentMade')}</TableCell>
+          <TableCell nowrap align="right" color="green-600">
+            <Text weight="medium">{amountPaid.toFixed(2)}</Text>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>
             <Trans i18nKey="paymentCard.lessTotalPayable" ns={ns} />
-          </td>
-          <td className={`${styles.value} ${styles.borderBottom}`}>
-            ({totalPayable.toFixed(2)})
-          </td>
-        </tr>
+          </TableCell>
+          <TableCell nowrap align="right">
+            <Text weight="medium">({totalPayable.toFixed(2)})</Text>
+          </TableCell>
+        </TableRow>
 
-        <tr className={styles.row}>
-          <td className={styles.label}>
-            <span style={{ fontWeight: 600 }}>
+        <TableRow>
+          <TableCell>
+            <Text weight="semibold">
               {t('paymentCard.paymentExcessShortfall')}:
-            </span>
-          </td>
-          <td
-            className={`${styles.value} ${amountPaid - totalPayable >= 0 ? styles.green : styles.red}`}
+            </Text>
+          </TableCell>
+          <TableCell
+            nowrap
+            align="right"
+            color={amountPaid - totalPayable >= 0 ? 'green-600' : 'red-600'}
           >
-            {amountPaid - totalPayable >= 0
-              ? (amountPaid - totalPayable).toFixed(2)
-              : `(${(totalPayable - amountPaid).toFixed(2)})`}
-          </td>
-        </tr>
-        <tr className={styles.row}>
-          <td className={styles.label}>
+            <Text weight="medium">
+              {amountPaid - totalPayable >= 0
+                ? (amountPaid - totalPayable).toFixed(2)
+                : `(${(totalPayable - amountPaid).toFixed(2)})`}
+            </Text>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>
             {t('paymentCard.prepaymentCarriedDown', {
               month: dayjs()
                 .month(entry.month - 2)
@@ -107,13 +118,15 @@ function BreakdownTable({
                 .locale(language)
                 .format(language.startsWith('zh') ? 'YYYY年MM月' : 'MMM YYYY')
             })}
-          </td>
-          <td className={styles.value}>{previousPrepayment.toFixed(2)}</td>
-        </tr>
+          </TableCell>
+          <TableCell nowrap align="right">
+            <Text weight="medium">{previousPrepayment.toFixed(2)}</Text>
+          </TableCell>
+        </TableRow>
 
-        <tr className={styles.row}>
-          <td className={styles.label}>
-            <span style={{ fontWeight: 600 }}>
+        <TableRow>
+          <TableCell>
+            <Text weight="semibold">
               {t('paymentCard.prepaymentBroughtDown', {
                 month: dayjs()
                   .month(entry.month)
@@ -121,22 +134,18 @@ function BreakdownTable({
                   .locale(language)
                   .format(language.startsWith('zh') ? 'YYYY年MM月' : 'MMM YYYY')
               })}
-            </span>
-          </td>
-          <td className={styles.totalValue}>
-            <Text
-              as="div"
-              className={styles.totalDivider}
-              color={{ print: 'black' }}
-            >
+            </Text>
+          </TableCell>
+          <TableCell nowrap align="right" variant="total">
+            <Text color={{ print: 'black' }} weight="semibold">
               {currentPrepayment >= 0
                 ? currentPrepayment.toFixed(2)
                 : `(${Math.abs(currentPrepayment).toFixed(2)})`}
             </Text>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
   )
 }
 
